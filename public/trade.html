@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade NFTs</title>
+  </head>
+  <body>
+    <h1>Trade NFTs</h1>
+    <form id="searchForm">
+      <input
+        type="text"
+        name="nftName"
+        placeholder="Search for NFTs"
+        required
+      />
+      <button type="submit">Search</button>
+    </form>
+    <div id="nftResults"></div>
+    <script>
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const response = await fetch("/search-nft", {
+            method: "POST",
+            body: formData,
+          });
+          const results = await response.json();
+          const resultsDiv = document.getElementById("nftResults");
+          resultsDiv.innerHTML = ""; // Clear previous results
+          results.forEach((nft) => {
+            resultsDiv.innerHTML += `<div>${nft.name} - ${nft.ipfsHash}</div>`;
+          });
+        });
+    </script>
+  </body>
+</html>

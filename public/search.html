@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search NFTs</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Link to your CSS file -->
+  </head>
+  <body>
+    <h1>Search for NFTs</h1>
+    <form id="searchForm">
+      <input type="text" id="nftName" placeholder="Enter NFT Name" required />
+      <button type="submit">Search</button>
+    </form>
+
+    <div id="searchResults"></div>
+
+    <script>
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const nftName = document.getElementById("nftName").value;
+
+          fetch("/search-nft", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nftName }),
+          })
+            .then((response) => response.json())
+            .then((results) => {
+              const resultsDiv = document.getElementById("searchResults");
+              resultsDiv.innerHTML = ""; // Clear previous results
+              results.forEach((nft) => {
+                const nftDiv = document.createElement("div");
+                nftDiv.innerHTML = `
+                        <h2>${nft.name}</h2>
+                        <p>Price: ${nft.price}</p>
+                        <button onclick="buyNFT(${nft.id}, '${nft.sellerPublicKey}')">Buy</button>
+                    `;
+                resultsDiv.appendChild(nftDiv);
+              });
+            })
+            .catch((error) => console.error("Error searching NFTs:", error));
+        });
+
+      function buyNFT(nftId, sellerPublicKey) {
+        const buyerPublicKey = prompt("Enter your public key:");
+        fetch("/finalize-nft-purchase", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nftId, buyerPublicKey, sellerPublicKey }),
+        })
+          .then((response) => response.json())
+          .then((data) => alert(data.message))
+          .catch((error) => console.error("Error finalizing purchase:", error));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buy NFT</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Link to your CSS file -->
+  </head>
+  <body>
+    <header>
+      <h1>Buy NFT</h1>
+      <nav>
+        <ul>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/trade">Trade</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="nft-details">
+        <h2>NFT Details</h2>
+        <div id="nft-info">
+          <p><strong>Name:</strong> <span id="nft-name">NFT Name Here</span></p>
+          <p>
+            <strong>Price:</strong>
+            <span id="nft-price">NFT Price Here</span> XLM
+          </p>
+          <p>
+            <strong>Description:</strong>
+            <span id="nft-description">Description of the NFT.</span>
+          </p>
+          <img id="nft-image" src="" alt="NFT Image" />
+        </div>
+        <button id="buy-button">Buy NFT</button>
+      </section>
+    </main>
+
+    <script>
+      // Sample NFT data - in real application, fetch this from the server
+      const nftId = 1; // Replace with the actual NFT ID
+      const userPublicKey = "yourUserPublicKey"; // Replace with the user's public key
+
+      // Function to fetch NFT details
+      async function fetchNftDetails() {
+        try {
+          const response = await fetch(`/get-nft-details/${nftId}`);
+          const nft = await response.json();
+
+          // Populate NFT details
+          document.getElementById("nft-name").textContent = nft.name;
+          document.getElementById("nft-price").textContent = nft.price;
+          document.getElementById("nft-description").textContent =
+            nft.description;
+          document.getElementById("nft-image").src = nft.image; // Replace with actual image URL
+        } catch (error) {
+          console.error("Error fetching NFT details:", error);
+        }
+      }
+
+      // Function to handle NFT purchase
+      async function buyNft() {
+        const response = await fetch("/make-payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            receiverKey: "sellerPublicKeyHere", // Replace with the actual seller's public key
+            senderKeypair: userPublicKey, // Use the actual user's keypair
+          }),
+        });
+
+        if (response.ok) {
+          alert("Purchase successful!");
+        } else {
+          alert("Error during purchase.");
+        }
+      }
+
+      document.getElementById("buy-button").addEventListener("click", buyNft);
+
+      // Fetch NFT details when the page loads
+      window.onload = fetchNftDetails;
+    </script>
+  </body>
+</html>

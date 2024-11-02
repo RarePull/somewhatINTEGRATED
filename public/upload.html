@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload NFT</title>
+  </head>
+  <body>
+    <h1>Upload NFT</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="text" name="nftName" placeholder="NFT Name" required />
+      <input type="number" name="nftPrice" placeholder="NFT Price" required />
+      <input type="file" name="nftFile" accept="image/*" required />
+      <button type="submit">Upload</button>
+    </form>
+    <script>
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const response = await fetch("/sell", {
+            method: "POST",
+            body: formData,
+          });
+          if (response.ok) {
+            alert("NFT uploaded successfully!");
+          } else {
+            alert("Error uploading NFT");
+          }
+        });
+    </script>
+  </body>
+</html>
